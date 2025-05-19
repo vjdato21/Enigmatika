@@ -48,6 +48,7 @@ jobs:
             Library-${{ matrix.targetPlatform }}-
 
       - name: Build project 🏗️
+        id: build_unity
         uses: game-ci/unity-builder@v4
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
@@ -64,8 +65,8 @@ jobs:
           path: build/${{ matrix.targetPlatform }}
 
       - name: Return Unity License ↩️
+        if: step.build_unity.outcome == 'failure'
         uses: game-ci/unity-return-license@v2
-        continue-on-error: true
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
