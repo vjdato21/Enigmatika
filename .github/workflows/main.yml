@@ -80,7 +80,6 @@ jobs:
     needs: build
     if: always()
     steps:
-      - uses: actions/checkout@v4
       - name: Return Unity License
         uses: game-ci/unity-return-license@v2
         env:
