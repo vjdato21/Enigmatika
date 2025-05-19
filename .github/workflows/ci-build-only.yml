@@ -65,6 +65,7 @@ jobs:
 
       - name: Return Unity License ↩️
         uses: game-ci/unity-return-license@v2
+        continue-on-error: true
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -73,7 +74,6 @@ jobs:
   appleBuild:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: macos-latest
-    needs: build
     timeout-minutes: 75
     strategy:
       fail-fast: false
@@ -124,6 +124,7 @@ jobs:
 
       - name: Return Unity License ↩️
         uses: game-ci/unity-return-license@v2
+        continue-on-error: true
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
