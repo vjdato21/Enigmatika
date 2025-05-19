@@ -1,4 +1,4 @@
-name: Unity Build Matrix 🚀 (without tests)
+name: Unity Build Only 🚀
 
 on: workflow_dispatch
 # [push, pull_request]
