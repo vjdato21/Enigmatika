@@ -1,4 +1,4 @@
-name: Actions 😎
+name: Test & Build for Mobile Platforms
 
 on: workflow_dispatch
 # [push, pull_request]
