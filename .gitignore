@@ -72,3 +72,7 @@ Assets/UI/Fonts/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fa
 Assets/UI/Fonts/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
 Assets/UI/Fonts/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
 Assets/UI/Fonts/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF.asset
+
+# Ignore temporaries from GameCI
+/[Aa]rtifacts/
+/[Cc]odeCoverage/
