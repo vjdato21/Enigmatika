@@ -76,3 +76,7 @@ Assets/UI/Fonts/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Robot
 # Ignore temporaries from GameCI
 /[Aa]rtifacts/
 /[Cc]odeCoverage/
+_activate-license/
+build/
+Logs/
+
