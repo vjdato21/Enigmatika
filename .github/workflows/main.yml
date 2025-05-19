@@ -1,4 +1,4 @@
-name: Test & Build for Mobile Platforms
+name: Unity Build Matrix 🚀
 
 on: workflow_dispatch
 # [push, pull_request]
