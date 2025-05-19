@@ -74,6 +74,7 @@ jobs:
   appleBuild:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: macos-latest
+    needs: build
     timeout-minutes: 75
     strategy:
       fail-fast: false
