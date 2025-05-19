@@ -32,6 +32,13 @@ jobs:
         with:
           unityVersion: ${{ env.UNITY_VERSION }}
 
+      - name: Free up disk space on runner 🧹
+        if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: true
+          docker-images: true
+
       - name: Restore Library cache 🔄️
         uses: actions/cache@v4
         with:
@@ -39,13 +46,6 @@ jobs:
           key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-${{ matrix.targetPlatform }}-
-
-      - name: Free up disk space on runner 🧹
-        if: matrix.targetPlatform == 'Android'
-        uses: jlumbroso/free-disk-space@v1.3.1
-        with:
-          tool-cache: true
-          docker-images: true
 
       - name: Build project 🏗️
         uses: game-ci/unity-builder@v4
