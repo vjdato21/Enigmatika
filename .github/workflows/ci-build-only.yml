@@ -1,12 +1,14 @@
 name: Unity Build Only 🚀
 
-on: workflow_dispatch
-# [push, pull_request]
+on:
+  workflow_dispatch:
+  # [push, pull_request]
 
 jobs:
   activate-license:
     name: Activate Unity License 🔑
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Activate Unity License
         uses: game-ci/unity-activate@v2
@@ -18,36 +20,37 @@ jobs:
   build:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
+    needs: activate-license
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
         targetPlatform:
-          #- StandaloneOSX # Build a macOS standalone (Intel 64-bit).
-          #- StandaloneWindows # Build a Windows standalone.
-          #- StandaloneWindows64 # Build a Windows 64-bit standalone.
-          #- StandaloneLinux64 # Build a Linux 64-bit standalone.
-          #- iOS # Build an iOS player.
-          - Android # Build an Android .apk standalone app.
-          #- WebGL # WebGL.
+          - Android
+          # - StandaloneWindows64
+          # - WebGL
+
     steps:
-      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: false
 
-      # Cache
-      - uses: actions/cache@v4
+      - name: Restore Library cache
+        uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-${{ matrix.targetPlatform }}-
 
-      - if: matrix.targetPlatform == 'Android'
+      - name: Free up disk space on runner
+        if: matrix.targetPlatform == 'Android'
         uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: true
+          docker-images: true
 
-      # Build
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
@@ -57,18 +60,18 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
 
-      # Output
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4.6.2
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.targetPlatform }}/**
+          path: build/${{ matrix.targetPlatform }}
 
   return-license:
     name: Return Unity License 🧹
     runs-on: ubuntu-latest
     needs: build
     if: always()
+    timeout-minutes: 5
     steps:
       - name: Return Unity License
         uses: game-ci/unity-return-license@v2
