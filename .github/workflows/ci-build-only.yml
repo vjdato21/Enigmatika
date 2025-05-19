@@ -65,7 +65,7 @@ jobs:
           path: build/${{ matrix.targetPlatform }}
 
       - name: Return Unity License ↩️
-        if: step.build_unity.outcome == 'failure'
+        if: steps.build_unity.outcome == 'failure'
         uses: game-ci/unity-return-license@v2
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
