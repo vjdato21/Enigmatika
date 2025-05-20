@@ -42,15 +42,6 @@ jobs:
         with:
           lfs: false
 
-      - name: Activate Unity License 🔑
-        uses: game-ci/unity-activate@v2
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          unityVersion: ${{ env.UNITY_VERSION }}
-
       - name: Free up disk space on Ubuntu runner 🧹
         uses: jlumbroso/free-disk-space@v1.3.1
         with:
@@ -85,14 +76,6 @@ jobs:
           path: build/Android
           compression-level: 0
           if-no-files-found: error
-
-      - name: Return Unity License ↩️
-        if: steps.build_unity.outcome == 'failure'
-        uses: game-ci/unity-return-license@v2
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           
   # iOS Build Job (starts after Android build completes)
   build-ios:
