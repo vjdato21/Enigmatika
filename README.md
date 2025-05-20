@@ -1,5 +1,5 @@
 # Project: Enigmatika
-[![Unity Build Only 🚀](https://github.com/vjdato21/Enigmatika_Version_Control/actions/workflows/ci-build-only.yml/badge.svg?event=workflow_dispatch)](https://github.com/vjdato21/Enigmatika_Version_Control/actions/workflows/ci-build-only.yml)
+[![Unity Build and Release 🚀](https://github.com/vjdato21/Enigmatika_Version_Control/actions/workflows/main.yml/badge.svg)](https://github.com/vjdato21/Enigmatika_Version_Control/actions/workflows/main.yml)
 
 This repository contains the source code for Enigmatika, a Mystery Adventure 3D Mobile Game. It is developed by a three-person team: JJ, Adrian, and Vince.
 
