@@ -45,7 +45,7 @@ public class NoteObjectHandler : MonoBehaviour
     {
         isChecking = true;
         UnityEngine.Debug.Log($"[{name}] Note UI detected. Waiting 3 seconds before triggering event...");
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
 
         // Double-check if still active
         foreach (var notePage in notePages)

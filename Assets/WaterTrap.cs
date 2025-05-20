@@ -38,6 +38,7 @@ public class WaterTrap : MonoBehaviour
     [Header("Extra Trigger Effect")]
     public GameObject escapeObject;
     private bool hasTriggered = false;
+    private bool isPermanentlyDisabled = false;
 
     private void Start()
     {
@@ -78,6 +79,8 @@ public class WaterTrap : MonoBehaviour
 
     private void CheckForTrigger()
     {
+        if (isPermanentlyDisabled) return;
+
         Collider[] hits = Physics.OverlapSphere(triggerPoint.transform.position, triggerRadius);
         foreach (var hit in hits)
         {
@@ -103,7 +106,7 @@ public class WaterTrap : MonoBehaviour
 
     public void StartWaterRise()
     {
-        if (hasTriggered || (gameOverUI != null && gameOverUI.activeSelf))
+        if (hasTriggered || isPermanentlyDisabled || (gameOverUI != null && gameOverUI.activeSelf))
             return;
 
         hasTriggered = true;
@@ -116,6 +119,36 @@ public class WaterTrap : MonoBehaviour
     public void SpeedUpWaterRise(float multiplier)
     {
         riseSpeed *= multiplier;
+    }
+
+    public void PermanentlyDisableWater()
+    {
+        isPermanentlyDisabled = true;
+        isRising = false;
+        isResetting = false;
+        hasTriggered = true;
+
+        // Immediately reset the water position
+        if (waterObject != null)
+        {
+            UnityEngine.Debug.Log($"Resetting water Y from {waterObject.transform.position.y} to {initialYPosition}");
+            Vector3 currentPos = waterObject.transform.position;
+            waterObject.transform.position = new Vector3(currentPos.x, initialYPosition, currentPos.z);
+        }
+
+        // Reset player and audio as needed 
+        if (gameOverUI != null)
+            gameOverUI.SetActive(false);
+
+        if (audioSource != null && backgroundMusic != null)
+        {
+            audioSource.Stop();
+            audioSource.clip = backgroundMusic;
+            audioSource.Play();
+        }
+
+        if (escapeObject != null)
+            escapeObject.SetActive(true);
     }
 
     public void ResetWaterPosition()

@@ -6447,6 +6447,8 @@ MonoBehaviour:
     exitFeedbackUIButton: {fileID: 1553498030}
     hasBeenAnswered: 0
     highlightObject: {fileID: 480983889}
+    selectedCorrectAnswerFeedback: 
+    selectedWrongAnswerFeedback: 
   - keyDetailButton: {fileID: 643920846}
     associatedWord: Symphony
     buttonAnswer: Correct
@@ -6469,6 +6471,8 @@ MonoBehaviour:
     exitFeedbackUIButton: {fileID: 1761791513}
     hasBeenAnswered: 0
     highlightObject: {fileID: 219087247}
+    selectedCorrectAnswerFeedback: 
+    selectedWrongAnswerFeedback: 
   - keyDetailButton: {fileID: 1930686016}
     associatedWord: Ghosts
     buttonAnswer: Wrong
@@ -6491,6 +6495,8 @@ MonoBehaviour:
     exitFeedbackUIButton: {fileID: 1387887842}
     hasBeenAnswered: 0
     highlightObject: {fileID: 1004870202}
+    selectedCorrectAnswerFeedback: 
+    selectedWrongAnswerFeedback: 
   - keyDetailButton: {fileID: 866022334}
     associatedWord: Unfinished
     buttonAnswer: Wrong
@@ -6513,6 +6519,8 @@ MonoBehaviour:
     exitFeedbackUIButton: {fileID: 1098459436}
     hasBeenAnswered: 0
     highlightObject: {fileID: 84055777}
+    selectedCorrectAnswerFeedback: 
+    selectedWrongAnswerFeedback: 
 --- !u!4 &88176431 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 287953103742606776, guid: 7c51d75c76cf44ae7a358c71c3de3837, type: 3}

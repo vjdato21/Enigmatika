@@ -38,6 +38,8 @@ public class IdentifyingKeyDetailsGame : MonoBehaviour
         public Button exitFeedbackUIButton;
         public bool hasBeenAnswered; // <-- Boolean to track if the entry has been answered
         public GameObject highlightObject; // <-- Add this for highlighting when answered
+        public string selectedCorrectAnswerFeedback; // New: feedback if selected answer is correct
+        public string selectedWrongAnswerFeedback;   // New: feedback if selected answer is wrong
     }
 
     [Header("Key Detail Entries")]
@@ -88,8 +90,16 @@ public class IdentifyingKeyDetailsGame : MonoBehaviour
         correctAnswerText.gameObject.SetActive(true);
 
         // Set selected answer
-        selectedAnswerText.text = $"Selected Answer: {selectedAnswer}";
-
+        if (selectedAnswer == entry.buttonAnswer)
+        {
+            selectedAnswerText.text = entry.selectedCorrectAnswerFeedback;
+            selectedAnswerText.color = Color.green;
+        }
+        else
+        {
+            selectedAnswerText.text = entry.selectedWrongAnswerFeedback;
+            selectedAnswerText.color = Color.red;
+        }
         // Set correct answer display
         correctAnswerText.text = $"Correct Answer: {entry.buttonAnswer}";
 
@@ -178,11 +188,11 @@ public class IdentifyingKeyDetailsGame : MonoBehaviour
         // Determine score remark
         if (percentage <= 0.02f)
         {
-            scoreRemarkText.text = "Please review the clues again.";
+            scoreRemarkText.text = "Try again next time Detective, I win.";
         }
         else if (percentage >= 0.75f)
         {
-            scoreRemarkText.text = "Well done!";
+            scoreRemarkText.text = "Your'e very clever Detective, the code is: 5567.";
         }
         else if (percentage >= 0.50f)
         {

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ButtonController : MonoBehaviour
 {
@@ -18,6 +19,10 @@ public class ButtonController : MonoBehaviour
     public HintPointManager hintPointManager;
     public HintUIManager hintUIManager;
     public HintMessageUIManager hintMessageUIManager; // Reference to your hint message UI manager
+
+    [Header("Puzzle Solved Event")]
+    public UnityEvent onPuzzleSolved;  // Event to notify listeners
+
 
     void Start()
     {
@@ -136,9 +141,10 @@ public class ButtonController : MonoBehaviour
         }
     }
 
+    private bool puzzleAlreadySolved = false; // Prevent multiple invocations
+
     private void CheckPuzzleUnlocked()
     {
-        // Check if all buttons are lit (white) and if interaction has occurred
         bool allLit = true;
         for (int i = 0; i < buttonStates.Length; i++)
         {
@@ -149,10 +155,16 @@ public class ButtonController : MonoBehaviour
             }
         }
 
-        // If all buttons are white (lit) and interaction has occurred, unlock the spike trap
         if (allLit && hasInteracted)
         {
             spikeTrap.unlockSpike = true;
+
+            if (!puzzleAlreadySolved)
+            {
+                puzzleAlreadySolved = true;
+                onPuzzleSolved?.Invoke();  // Notify listeners
+                UnityEngine.Debug.Log("Puzzle solved: all buttons are lit!");
+            }
         }
         else
         {

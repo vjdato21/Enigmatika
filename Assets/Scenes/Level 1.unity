@@ -17881,6 +17881,9 @@ MonoBehaviour:
   hintPointManager: {fileID: 1081013138}
   hintUIManager: {fileID: 331030179}
   hintMessageUIManager: {fileID: 803041614}
+  onPuzzleSolved:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &175715947
 GameObject:
   m_ObjectHideFlags: 0
