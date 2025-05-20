@@ -64,12 +64,31 @@ jobs:
         with:
           unityVersion: ${{ env.UNITY_VERSION }}
 
-      - name: Free up disk space on runner 🧹
-        if: matrix.targetPlatform == 'Android'
+      - name: Free up disk space on Ubuntu runner 🧹
+        if: matrix.os == 'ubuntu-latest'
         uses: jlumbroso/free-disk-space@v1.3.1
         with:
           tool-cache: true
           docker-images: true
+          
+      # For macOS, we can use a manual approach to free disk space
+      - name: Free up disk space on macOS runner 🧹
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo "Removing Xcode cached downloads..."
+          rm -rf ~/Library/Caches/com.apple.dt.Xcode/Downloads
+          
+          echo "Removing simulators..."
+          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/
+          
+          echo "Removing caches..."
+          rm -rf ~/Library/Caches/*
+          
+          echo "Removing CocoaPods cache..."
+          rm -rf ~/.cocoapods
+          
+          echo "Showing available disk space:"
+          df -h
 
       - name: Restore Library cache 🔄️
         uses: actions/cache@v4
@@ -89,7 +108,8 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
           unityVersion: ${{ env.UNITY_VERSION }}
-          customParameters: '-buildVersion ${{ needs.validate-version.outputs.version }}'
+          versioning: Custom
+          version: ${{ needs.validate-version.outputs.version }}
 
       - name: Upload Build Artifact ⬆️
         uses: actions/upload-artifact@v4
