@@ -32,7 +32,7 @@ jobs:
   # iOS Build Job (starts after Android build completes)
   build-ios:
     name: Build for iOS
-    runs-on: macos-latest-xlarge
+    runs-on: macos-latest-large
     timeout-minutes: 75
     needs: validate-version
     if: needs.validate-version.outputs.is_valid == 'true'
