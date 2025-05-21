@@ -1,4 +1,4 @@
-name: Unity Build and Release 🚀
+name: Unity Build and Release (Android & iOS) 🚀
 
 on:
   workflow_dispatch:
@@ -29,12 +29,92 @@ jobs:
             exit 1
           fi
 
+  # iOS Build Job (starts after Android build completes)
+  build-ios:
+    name: Build for iOS
+    runs-on: macos-15-xlarge
+    timeout-minutes: 75
+    if: needs.validate-version.outputs.is_valid == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+          
+      - name: Free up disk space on macOS runner 🧹
+        run: |
+          echo "=== Before cleanup ==="
+          df -h
+          
+          echo "=== Removing Xcode cached downloads ==="
+          sudo rm -rf ~/Library/Caches/com.apple.dt.Xcode/Downloads || true
+          
+          echo "=== Removing unused iOS simulators ==="
+          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/ || true
+          
+          echo "=== Removing system caches ==="
+          sudo rm -rf ~/Library/Caches/* || true
+          sudo rm -rf /Library/Caches/* || true
+          
+          echo "=== Cleaning CocoaPods cache ==="
+          sudo rm -rf ~/.cocoapods || true
+          
+          echo "=== Removing Xcode derived data ==="
+          sudo rm -rf ~/Library/Developer/Xcode/DerivedData/* || true
+          
+          echo "=== Cleaning npm cache ==="
+          npm cache clean --force || true
+          
+          echo "=== Cleaning yarn cache ==="
+          yarn cache clean || true
+          
+          echo "=== Removing unused Docker images ==="
+          docker system prune -af || true
+          
+          echo "=== Removing Unity cache folders ==="
+          sudo rm -rf ~/Library/Unity/cache || true
+          
+          echo "=== Removing temporary files ==="
+          sudo rm -rf /tmp/* || true
+          
+          echo "=== After cleanup ==="
+          df -h
+
+      - name: Restore Library cache 🔄️
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-iOS-
+
+      - name: Build project 🏗️
+        id: build_unity
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: iOS
+          unityVersion: ${{ env.UNITY_VERSION }}
+          versioning: Custom
+          version: ${{ needs.validate-version.outputs.version }}
+
+      - name: Upload Build Artifact ⬆️
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-${{ needs.validate-version.outputs.version }}
+          path: build/iOS
+          compression-level: 0
+          if-no-files-found: error
+
   # Android Build Job
   build-android:
     name: Build for Android
     runs-on: ubuntu-latest
     timeout-minutes: 75
-    needs: validate-version
+    needs: [validate-version, build-ios]
     if: needs.validate-version.outputs.is_valid == 'true'
     steps:
       - name: Checkout repository
@@ -74,69 +154,6 @@ jobs:
         with:
           name: Android-${{ needs.validate-version.outputs.version }}
           path: build/Android
-          compression-level: 0
-          if-no-files-found: error
-          
-  # iOS Build Job (starts after Android build completes)
-  build-ios:
-    name: Build for iOS
-    runs-on: macos-latest
-    timeout-minutes: 75
-    needs: [validate-version, build-android]
-    if: needs.validate-version.outputs.is_valid == 'true'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          lfs: false
-          
-      # For macOS, we can use a manual approach to free disk space
-      - name: Free up disk space on macOS runner 🧹
-        run: |
-          echo "Removing Xcode cached downloads..."
-          sudo rm -rf ~/Library/Caches/com.apple.dt.Xcode/Downloads || true
-          
-          echo "Removing simulators..."
-          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/ || true
-          
-          echo "Removing caches..."
-          sudo rm -rf ~/Library/Caches/* || true
-          
-          echo "Removing CocoaPods cache..."
-          sudo rm -rf ~/.cocoapods || true
-          
-          echo "Removing system derived data..."
-          sudo rm -rf ~/Library/Developer/Xcode/DerivedData/* || true
-          
-          echo "Showing available disk space:"
-          df -h
-
-      - name: Restore Library cache 🔄️
-        uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-          restore-keys: |
-            Library-iOS-
-
-      - name: Build project 🏗️
-        id: build_unity
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          targetPlatform: iOS
-          unityVersion: ${{ env.UNITY_VERSION }}
-          versioning: Custom
-          version: ${{ needs.validate-version.outputs.version }}
-
-      - name: Upload Build Artifact ⬆️
-        uses: actions/upload-artifact@v4
-        with:
-          name: iOS-${{ needs.validate-version.outputs.version }}
-          path: build/iOS
           compression-level: 0
           if-no-files-found: error
 
