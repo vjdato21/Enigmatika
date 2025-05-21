@@ -1,4 +1,4 @@
-name: Unity Build and Release (Android & iOS) 🚀
+name: Unity Build and Release 🚀
 
 on:
   workflow_dispatch:
@@ -28,12 +28,13 @@ jobs:
             echo "is_valid=false" >> $GITHUB_OUTPUT
             exit 1
           fi
-
+          
   # iOS Build Job (starts after Android build completes)
   build-ios:
     name: Build for iOS
-    runs-on: macos-latest
+    runs-on: macos-latest-xlarge
     timeout-minutes: 75
+    needs: validate-version
     if: needs.validate-version.outputs.is_valid == 'true'
     steps:
       - name: Checkout repository
@@ -41,43 +42,17 @@ jobs:
         with:
           lfs: false
           
-      - name: Free up disk space on macOS runner 🧹
+      - name: Free up disk space on macOS runner
         run: |
-          echo "=== Before cleanup ==="
+          echo "Before cleanup:"
           df -h
-          
-          echo "=== Removing Xcode cached downloads ==="
-          sudo rm -rf ~/Library/Caches/com.apple.dt.Xcode/Downloads || true
-          
-          echo "=== Removing unused iOS simulators ==="
-          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/ || true
-          
-          echo "=== Removing system caches ==="
-          sudo rm -rf ~/Library/Caches/* || true
-          sudo rm -rf /Library/Caches/* || true
-          
-          echo "=== Cleaning CocoaPods cache ==="
-          sudo rm -rf ~/.cocoapods || true
-          
-          echo "=== Removing Xcode derived data ==="
-          sudo rm -rf ~/Library/Developer/Xcode/DerivedData/* || true
-          
-          echo "=== Cleaning npm cache ==="
-          npm cache clean --force || true
-          
-          echo "=== Cleaning yarn cache ==="
-          yarn cache clean || true
-          
-          echo "=== Removing unused Docker images ==="
-          docker system prune -af || true
-          
-          echo "=== Removing Unity cache folders ==="
-          sudo rm -rf ~/Library/Unity/cache || true
-          
-          echo "=== Removing temporary files ==="
-          sudo rm -rf /tmp/* || true
-          
-          echo "=== After cleanup ==="
+          sudo rm -rf /Applications/Xcode_*/Contents/Developer/Platforms/iPhoneSimulator.platform
+          sudo rm -rf /Library/Developer/CoreSimulator
+          sudo rm -rf /Users/runner/Library/Developer/CoreSimulator
+          sudo rm -rf /Users/runner/Library/Caches/*
+          sudo rm -rf /Users/runner/Library/Developer/Xcode/DerivedData/*
+          sudo rm -rf /private/var/folders/*
+          echo "After cleanup:"
           df -h
 
       - name: Restore Library cache 🔄️
@@ -109,58 +84,10 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
-  # Android Build Job
-  build-android:
-    name: Build for Android
-    runs-on: ubuntu-latest
-    timeout-minutes: 75
-    needs: [validate-version, build-ios]
-    if: needs.validate-version.outputs.is_valid == 'true'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          lfs: false
-
-      - name: Free up disk space on Ubuntu runner 🧹
-        uses: jlumbroso/free-disk-space@v1.3.1
-        with:
-          tool-cache: true
-          docker-images: true
-
-      - name: Restore Library cache 🔄️
-        uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-          restore-keys: |
-            Library-Android-
-
-      - name: Build project 🏗️
-        id: build_unity
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          targetPlatform: Android
-          unityVersion: ${{ env.UNITY_VERSION }}
-          versioning: Custom
-          version: ${{ needs.validate-version.outputs.version }}
-
-      - name: Upload Build Artifact ⬆️
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android-${{ needs.validate-version.outputs.version }}
-          path: build/Android
-          compression-level: 0
-          if-no-files-found: error
-
   create-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [validate-version, build-android, build-ios]
+    needs: [validate-version, build-ios]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
