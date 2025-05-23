@@ -26,7 +26,6 @@ public class ContextUIController : MonoBehaviour
             if (!context.hasAppeared && context.openButton != null && context.openButton.gameObject.activeInHierarchy)
             {
                 context.hasAppeared = true;
-                StartCoroutine(FlashButton(context.openButton, 3f));
             }
         }
     }
@@ -37,25 +36,6 @@ public class ContextUIController : MonoBehaviour
         {
             SetupContextUI(context);
         }
-    }
-
-    private IEnumerator FlashButton(Button button, float duration = 3f, float blinkInterval = 0.5f)
-    {
-        Image buttonImage = button.GetComponent<Image>();
-        if (buttonImage == null) yield break;
-
-        float elapsed = 0f;
-        bool isVisible = true;
-
-        while (elapsed < duration)
-        {
-            buttonImage.enabled = isVisible;
-            isVisible = !isVisible;
-            yield return new WaitForSeconds(blinkInterval);
-            elapsed += blinkInterval;
-        }
-
-        buttonImage.enabled = true; // Ensure it ends visible
     }
 
     // Call this to add a new Context UI dynamically (optional use)

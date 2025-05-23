@@ -12,13 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6de7b04a9e0c4364a80d79cce049ad9e, type: 3}
   m_Name: '[Save Manager] Save Data Asset'
   m_EditorClassIdentifier: 
-  saveData:
-  - {fileID: 11400000, guid: 9c8030bacb333a840be9d56c28b71d28, type: 2}
-  - {fileID: 11400000, guid: 82e2e69aec1bee748b7a19fdff4d4e9a, type: 2}
-  - {fileID: 11400000, guid: 2da22226c994d224bacdc55fe241d9a2, type: 2}
-  - {fileID: 11400000, guid: 8f6d7bea3d5dc2b44922187443016574, type: 2}
-  - {fileID: 11400000, guid: fb9878e27c123a043b26be15df41c4e0, type: 2}
-  - {fileID: 11400000, guid: af308c642c6cdf3439543d778d0e4317, type: 2}
-  - {fileID: 11400000, guid: 25808d1c50c92c74aaf720e4a925f24b, type: 2}
-  - {fileID: 11400000, guid: f5d36663938e71b44abf8492c1846f4c, type: 2}
-  - {fileID: 11400000, guid: bdf0e8561e535a244a3c292a16ad5242, type: 2}
+  saveData: []
